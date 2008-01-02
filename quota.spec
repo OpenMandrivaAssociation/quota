@@ -17,6 +17,7 @@ Patch5:		quota-3.06-pie.patch
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	gettext
 Requires:	kernel >= 2.4 initscripts >= 6.38
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 The quota package contains system administration tools for monitoring
