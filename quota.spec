@@ -4,7 +4,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		%{name}
 Version:	%{version}
-Release:	%mkrel 2
+Release:	%mkrel 3
 URL:		http://sourceforge.net/projects/linuxquota/
 License:	BSD
 Group:		System/Configuration/Other
@@ -16,7 +16,7 @@ Patch3:		quota-tools-default-conf.patch
 Patch5:		quota-3.06-pie.patch
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	gettext
-Requires:	kernel >= 2.4 initscripts >= 6.38
+Requires:	initscripts >= 6.38
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
