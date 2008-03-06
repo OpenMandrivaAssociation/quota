@@ -1,42 +1,55 @@
-%define name	quota
-%define version	3.14
-
 Summary:	System administration tools for monitoring users' disk usage
-Name:		%{name}
-Version:	%{version}
-Release:	%mkrel 3
-URL:		http://sourceforge.net/projects/linuxquota/
-License:	BSD
+Name:		quota
+Version:	3.15
+Release:	%mkrel 1
+License:	BSD and GPLv2+
 Group:		System/Configuration/Other
-Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.bz2
+URL:		http://sourceforge.net/projects/linuxquota/
+Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.gz
 Source1:	%{name}.bash-completion
-Patch0:		quota-tools-man-pages-path.patch
-Patch1:		quota-tools-no-stripping.patch
-Patch3:		quota-tools-default-conf.patch
-Patch5:		quota-3.06-pie.patch
+Patch0:		quota-3.06-warnquota.patch
+Patch1:		quota-3.06-no-stripping.patch
+Patch2:		quota-3.06-man-page.patch
+Patch3:		quota-3.06-pie.patch
+Patch4:		quota-3.13-wrong-ports.patch
+Patch5:		quota-3.15-manpages.patch
+Patch50:	quota-tools-default-conf.patch
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	gettext
+BuildRequires:	tcp_wrappers-devel
+Requires:	e2fsprogs
 Requires:	initscripts >= 6.38
+Requires:	tcp_wrappers
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
-The quota package contains system administration tools for monitoring
-and limiting users' and or groups' disk usage, per filesystem.
+The quota package contains system administration tools for monitoring and
+limiting users' and or groups' disk usage, per filesystem.
 
-Install quota if you want to monitor and/or limit user/group disk
-usage.
+Install quota if you want to monitor and/or limit user/group disk usage.
 
 %prep
+
 %setup -q -n quota-tools
-%patch0 -p1 -b .man-pages
-%patch1 -p1 -b .no-stripping
-%patch3 -p1 -b .default-conf
+
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
 %ifnarch ppc ppc64
-%patch5 -p1 -b .pie
+%patch3 -p1
 %endif
+%patch4 -p1
+%patch5 -p1
+
+%patch50 -p1 -b .default-conf
 
 %build
-%configure --with-ext2direct=no --enable-rootsbin
+%serverbuild
+
+%configure \
+    --with-ext2direct=no \
+    --enable-rootsbin 
+
 %make
 
 %install
@@ -53,13 +66,19 @@ make install ROOTDIR=%{buildroot} \
              DEF_SBIN_MODE=755 \
              DEF_MAN_MODE=644
 
-install -m 644 warnquota.conf %{buildroot}%{_sysconfdir}
+install -m0644 warnquota.conf %{buildroot}%{_sysconfdir}
+#
+# we don't support XFS yet
+#
+rm -f %{buildroot}%{_sbindir}/quot
+rm -f %{buildroot}%{_sbindir}/xqmstats
+rm -f %{buildroot}%{_mandir}/man8/quot.*
 
 %find_lang %{name}
 
 # bash completion
-install -d -m 755 %{buildroot}%{_sysconfdir}/bash_completion.d
-install -m 644 %{SOURCE1} %{buildroot}%{_sysconfdir}/bash_completion.d/%{name}
+install -d %{buildroot}%{_sysconfdir}/bash_completion.d
+install -m0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/bash_completion.d/%{name}
 
 %clean
 rm -rf %{buildroot}
@@ -75,5 +94,3 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_includedir}/rpcsvc/*
 %{_mandir}/man?/*
-
-
