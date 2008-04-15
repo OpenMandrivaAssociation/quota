@@ -1,6 +1,6 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
-Version:	3.15
+Version:	3.16
 Release:	%mkrel 1
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
@@ -8,11 +8,9 @@ URL:		http://sourceforge.net/projects/linuxquota/
 Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.gz
 Source1:	%{name}.bash-completion
 Patch0:		quota-3.06-warnquota.patch
-Patch1:		quota-3.06-no-stripping.patch
 Patch2:		quota-3.06-man-page.patch
 Patch3:		quota-3.06-pie.patch
 Patch4:		quota-3.13-wrong-ports.patch
-Patch5:		quota-3.15-manpages.patch
 Patch50:	quota-tools-default-conf.patch
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	gettext
@@ -29,24 +27,21 @@ limiting users' and or groups' disk usage, per filesystem.
 Install quota if you want to monitor and/or limit user/group disk usage.
 
 %prep
-
 %setup -q -n quota-tools
 
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
 %ifnarch ppc ppc64
 %patch3 -p1
 %endif
 %patch4 -p1
-%patch5 -p1
 
 %patch50 -p1 -b .default-conf
 
 %build
 %serverbuild
 
-%configure \
+%configure2_5x \
     --with-ext2direct=no \
     --enable-rootsbin 
 
@@ -64,7 +59,8 @@ install -d %{buildroot}%{_mandir}/{man1,man2,man3,man8}
 make install ROOTDIR=%{buildroot} \
              DEF_BIN_MODE=755 \
              DEF_SBIN_MODE=755 \
-             DEF_MAN_MODE=644
+             DEF_MAN_MODE=644 \
+             STRIP=""
 
 install -m0644 warnquota.conf %{buildroot}%{_sysconfdir}
 #
