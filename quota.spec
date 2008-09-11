@@ -1,16 +1,20 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	3.16
-Release:	%mkrel 2
+Release:	%mkrel 3
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
 Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.gz
 Source1:	%{name}.bash-completion
 Patch0:		quota-3.06-warnquota.patch
+Patch1:		quota-3.06-no-stripping.patch
 Patch2:		quota-3.06-man-page.patch
 Patch3:		quota-3.06-pie.patch
 Patch4:		quota-3.13-wrong-ports.patch
+Patch5:		quota-3.16-formatstring.patch
+Patch6:		quota-3.16-helpoption.patch
+Patch7:		quota-3.16-upstreampatches.patch
 Patch50:	quota-tools-default-conf.patch
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	gettext
@@ -27,14 +31,18 @@ limiting users' and or groups' disk usage, per filesystem.
 Install quota if you want to monitor and/or limit user/group disk usage.
 
 %prep
-%setup -q -n quota-tools
 
+%setup -q -n quota-tools
 %patch0 -p1
+%patch1 -p1
 %patch2 -p1
 %ifnarch ppc ppc64
 %patch3 -p1
 %endif
 %patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 
 %patch50 -p1 -b .default-conf
 
@@ -42,6 +50,7 @@ Install quota if you want to monitor and/or limit user/group disk usage.
 %serverbuild
 
 %configure2_5x \
+    --enable-ldapmail=try \
     --with-ext2direct=no \
     --enable-rootsbin 
 
@@ -63,12 +72,12 @@ make install ROOTDIR=%{buildroot} \
              STRIP=""
 
 install -m0644 warnquota.conf %{buildroot}%{_sysconfdir}
-#
+
 # we don't support XFS yet
-#
 rm -f %{buildroot}%{_sbindir}/quot
 rm -f %{buildroot}%{_sbindir}/xqmstats
 rm -f %{buildroot}%{_mandir}/man8/quot.*
+rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 %find_lang %{name}
 
@@ -81,6 +90,7 @@ rm -rf %{buildroot}
 
 %files -f %{name}.lang
 %defattr(-,root,root)
+%doc Changelog README.ldap-support README.mailserver ldap-scripts
 %{_sysconfdir}/bash_completion.d/%{name}
 %config(noreplace) %{_sysconfdir}/warnquota.conf
 %config(noreplace) %{_sysconfdir}/quotagrpadmins
