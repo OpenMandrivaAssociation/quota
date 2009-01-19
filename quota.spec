@@ -1,23 +1,20 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
-Version:	3.16
-Release:	%mkrel 4
+Version:	3.17
+Release:	%mkrel 1
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
 Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.gz
 Source1:	%{name}.bash-completion
 Patch0:		quota-3.06-warnquota.patch
-Patch1:		quota-3.06-no-stripping.patch
+Patch1:		quota-3.17-no-stripping.patch
 Patch2:		quota-3.06-man-page.patch
 Patch3:		quota-3.06-pie.patch
 Patch4:		quota-3.13-wrong-ports.patch
-Patch5:		quota-3.16-formatstring.patch
 Patch6:		quota-3.16-helpoption.patch
-Patch7:		quota-3.16-upstreampatches.patch
 Patch8:		quota-3.16-ext4support.patch
 Patch9:		quota-3.16-quotaoffhelp.patch
-Patch10:	quota-3.16-rquotad3Ninconsistency.patch
 Patch50:	quota-tools-default-conf.patch
 BuildRequires:	e2fsprogs-devel
 BuildRequires:	gettext
@@ -43,12 +40,9 @@ Install quota if you want to monitor and/or limit user/group disk usage.
 %patch3 -p1
 %endif
 %patch4 -p1
-%patch5 -p1
 %patch6 -p1
-%patch7 -p1
 %patch8 -p1 -b .ext4
 %patch9 -p1 -b .usage
-%patch10 -p1 -b .3N
 
 %patch50 -p1 -b .default-conf
 
