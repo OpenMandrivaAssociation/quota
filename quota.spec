@@ -1,12 +1,11 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	3.17
-Release:	%mkrel 1
+Release:	%mkrel 2
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
 Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.gz
-Source1:	%{name}.bash-completion
 Patch0:		quota-3.06-warnquota.patch
 Patch1:		quota-3.17-no-stripping.patch
 Patch2:		quota-3.06-man-page.patch
@@ -87,17 +86,12 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 %find_lang %{name}
 
-# bash completion
-install -d %{buildroot}%{_sysconfdir}/bash_completion.d
-install -m0644 %{SOURCE1} %{buildroot}%{_sysconfdir}/bash_completion.d/%{name}
-
 %clean
 rm -rf %{buildroot}
 
 %files -f %{name}.lang
 %defattr(-,root,root)
 %doc Changelog README.ldap-support README.mailserver ldap-scripts
-%{_sysconfdir}/bash_completion.d/%{name}
 %config(noreplace) %{_sysconfdir}/warnquota.conf
 %config(noreplace) %{_sysconfdir}/quotagrpadmins
 %config(noreplace) %{_sysconfdir}/quotatab
