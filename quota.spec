@@ -1,7 +1,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	3.17
-Release:	%mkrel 4
+Release:	%mkrel 6
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
