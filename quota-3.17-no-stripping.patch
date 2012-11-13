@@ -1,0 +1,41 @@
+diff -Naur --exclude '*.rej' --exclude '*~' --exclude '*.orig' quota-tools/Makefile.in quota-tools-no-stripping/Makefile.in
+--- quota-tools/Makefile.in	2009-01-05 15:12:51.000000000 +0100
++++ quota-tools-no-stripping/Makefile.in	2009-01-19 16:20:46.000000000 +0100
+@@ -23,8 +23,8 @@
+ BIN_OWNER     = bin
+ BIN_GROUP     = bin
+ DEF_SUID_MODE = 4511
+-DEF_BIN_MODE = 555
+-DEF_SBIN_MODE = 555
++DEF_BIN_MODE = 755
++DEF_SBIN_MODE = 755
+ DEF_MAN_MODE  = 444
+ DEF_CONF_MODE = 644
+ RPCGEN        = rpcgen
+@@ -83,10 +83,10 @@
+ 	-mkdir -p $(ROOTDIR)$(sbindir)
+ 	-mkdir -p $(ROOTDIR)$(bindir)
+ 	-mkdir -p $(ROOTDIR)$(root_sbindir)
+-	-$(INSTALL) $(STRIP) -m $(DEF_SBIN_MODE) \
++	-$(INSTALL) -m $(DEF_SBIN_MODE) \
+ 	quotacheck quotaon $(ROOTDIR)$(root_sbindir)
+ 	-$(LN) quotaon $(ROOTDIR)$(root_sbindir)/quotaoff
+-	-$(INSTALL) $(STRIP) -m $(DEF_SBIN_MODE) \
++	-$(INSTALL) -m $(DEF_SBIN_MODE) \
+ 	edquota repquota warnquota quotastats setquota quot xqmstats \
+ 	convertquota $(ROOTDIR)$(sbindir)
+ 	-mkdir -p $(ROOTDIR)$(sysconfdir)
+@@ -99,10 +99,10 @@
+ 	-mkdir -p $(ROOTDIR)$(mandir)/man8
+ 	-$(INSTALL) -m 755 -d $(ROOTDIR)$(includedir)/rpcsvc
+ 	-$(INSTALL) -m 644 rquota.h rquota.x $(ROOTDIR)$(includedir)/rpcsvc
+-	-$(INSTALL) $(STRIP) -m $(DEF_SBIN_MODE) quota $(ROOTDIR)$(bindir)
+-	-$(INSTALL) $(STRIP) -m $(DEF_SBIN_MODE) rpc.rquotad $(ROOTDIR)$(sbindir)
++	-$(INSTALL) -m $(DEF_SBIN_MODE) quota $(ROOTDIR)$(bindir)
++	-$(INSTALL) -m $(DEF_SBIN_MODE) rpc.rquotad $(ROOTDIR)$(sbindir)
+ ifneq ($(NETLINKLIBS),)
+-	-$(INSTALL) $(STRIP) -m $(DEF_SBIN_MODE) quota_nld $(ROOTDIR)$(sbindir)
++	-$(INSTALL) -m $(DEF_SBIN_MODE) quota_nld $(ROOTDIR)$(sbindir)
+ endif
+ 	-$(INSTALL) -m $(DEF_MAN_MODE) *.1 $(ROOTDIR)$(mandir)/man1
+ 	-$(INSTALL) -m $(DEF_MAN_MODE) *.2 $(ROOTDIR)$(mandir)/man2
