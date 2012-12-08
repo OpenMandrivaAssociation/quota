@@ -1,7 +1,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	3.17
-Release:	%mkrel 7
+Release:	10
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
@@ -14,13 +14,12 @@ Patch4:		quota-3.13-wrong-ports.patch
 Patch5:		quota-3.16-helpoption.patch
 Patch6:		quota-3.16-quotaoffhelp.patch
 Patch50:	quota-tools-default-conf.patch
-BuildRequires:	e2fsprogs-devel
+BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	gettext
 BuildRequires:	tcp_wrappers-devel
 Requires:	e2fsprogs
 Requires:	initscripts >= 6.38
 Requires:	tcp_wrappers
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 %description
 The quota package contains system administration tools for monitoring and
@@ -60,8 +59,6 @@ done
 %make
 
 %install
-rm -rf %{buildroot}
-
 install -d %{buildroot}/sbin
 install -d %{buildroot}%{_sysconfdir}
 install -d %{buildroot}%{_sbindir}
@@ -84,11 +81,7 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 %find_lang %{name}
 
-%clean
-rm -rf %{buildroot}
-
 %files -f %{name}.lang
-%defattr(-,root,root)
 %doc Changelog README.ldap-support README.mailserver ldap-scripts
 %config(noreplace) %{_sysconfdir}/warnquota.conf
 %config(noreplace) %{_sysconfdir}/quotagrpadmins
@@ -98,3 +91,91 @@ rm -rf %{buildroot}
 %{_sbindir}/*
 %{_includedir}/rpcsvc/*
 %{_mandir}/man?/*
+
+
+%changelog
+* Thu May 05 2011 Oden Eriksson <oeriksson@mandriva.com> 3.17-7mdv2011.0
++ Revision: 669393
+- mass rebuild
+
+* Fri Dec 03 2010 Oden Eriksson <oeriksson@mandriva.com> 3.17-6mdv2011.0
++ Revision: 607266
+- rebuild
+
+* Mon Mar 15 2010 Oden Eriksson <oeriksson@mandriva.com> 3.17-4mdv2010.1
++ Revision: 520206
+- rebuilt for 2010.1
+
+* Thu Sep 03 2009 Christophe Fergeau <cfergeau@mandriva.com> 3.17-3mdv2010.0
++ Revision: 426841
+- rebuild
+
+* Wed Feb 04 2009 Guillaume Rousse <guillomovitch@mandriva.org> 3.17-2mdv2009.1
++ Revision: 337607
+- new release
+- sync patch set with fedora
+- keep bash completion in its own package
+- rediff patch 1 (stripping)
+- drop partches 5, 7 and 10, merged upstream
+
+* Mon Dec 22 2008 Oden Eriksson <oeriksson@mandriva.com> 3.16-4mdv2009.1
++ Revision: 317559
+- sync with quota-3.16-8.fc11.src.rpm
+
+* Thu Sep 11 2008 Oden Eriksson <oeriksson@mandriva.com> 3.16-3mdv2009.0
++ Revision: 283788
+- sync with quota-3.16-4.fc10.src.rpm
+
+* Thu Aug 07 2008 Thierry Vignaud <tv@mandriva.org> 3.16-2mdv2009.0
++ Revision: 265615
+- rebuild early 2009.0 package (before pixel changes)
+
+* Tue Apr 15 2008 Guillaume Rousse <guillomovitch@mandriva.org> 3.16-1mdv2009.0
++ Revision: 194365
+- new version
+  drop patch 5 (merged upstream)
+  drop patch 1 (makefile arg is enough)
+
+* Thu Mar 06 2008 Oden Eriksson <oeriksson@mandriva.com> 3.15-1mdv2008.1
++ Revision: 180933
+- sync with fc9
+
+* Tue Jan 15 2008 Thierry Vignaud <tv@mandriva.org> 3.14-3mdv2008.1
++ Revision: 152810
+- remove useless kernel require
+- kill re-definition of %%buildroot on Pixel's request
+
+  + Olivier Blin <oblin@mandriva.com>
+    - restore BuildRoot
+
+
+* Sun Jan 14 2007 Guillaume Rousse <guillomovitch@mandriva.org> 3.14-2mdv2007.0
++ Revision: 108839
+- spec cleanup
+- drop unused patches
+- add bash completion
+
+* Mon Dec 11 2006 Emmanuel Andry <eandry@mandriva.org> 3.14-1mdv2007.1
++ Revision: 94583
+- New version 3.14
+  bunzip patches
+  drop patch 2
+- Import quota
+
+* Thu Jan 05 2006 Stefan van der Eijk <stefan@eijk.nu> 3.13-2mdk
+- rebuild
+
+* Wed Aug 10 2005 Per Øyvind Karlsen <pkarlsen@mandriva.com> 3.13-1mdk
+- 3.13
+- fix summary-ended-with-dot
+- %%mkrel
+
+* Thu Nov 11 2004 Per Øyvind Karlsen <peroyvind@linux-mandrake.com> 3.12-1mdk
+- 3.12
+- sync with fedora
+
+* Sun Aug 08 2004 Oden Eriksson <oeriksson@mandrakesoft.com> 3.10-1mdk
+- 3.10
+- synced with fedora
+- misc spec file fixes
+
