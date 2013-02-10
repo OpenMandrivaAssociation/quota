@@ -1,7 +1,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	3.17
-Release:	10
+Release:	11
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
@@ -17,6 +17,7 @@ Patch50:	quota-tools-default-conf.patch
 BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	gettext
 BuildRequires:	tcp_wrappers-devel
+BuildRequires:	pkgconfig(libtirpc)
 Requires:	e2fsprogs
 Requires:	initscripts >= 6.38
 Requires:	tcp_wrappers
@@ -94,6 +95,9 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 
 %changelog
+* Sun Feb 10 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 3.17-2
+- add buildrequires on pkgconfig(libtirpc)
+
 * Thu May 05 2011 Oden Eriksson <oeriksson@mandriva.com> 3.17-7mdv2011.0
 + Revision: 669393
 - mass rebuild
