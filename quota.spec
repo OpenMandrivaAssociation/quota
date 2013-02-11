@@ -18,6 +18,7 @@ Patch8:		quota-4.01-define_charset_in_mail.patch
 Patch9:		quota-4.01-Do-not-fiddle-with-quota-files-on-XFS-and-GFS.patch
 # In upstream after 4.01, SF#3602777
 Patch10:	quota-4.01-quotacheck-Make-sure-d-provides-at-least-as-much-inf.patch
+Patch11:	quota-4.01-libtirpc.patch
 BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	gettext
 BuildRequires:	tcp_wrappers-devel
@@ -47,6 +48,7 @@ Install quota if you want to monitor and/or limit user/group disk usage.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1 -b .tirpc~
 
 #fix typos/mistakes in localized documentation
 for pofile in $(find ./po/*.p*)
@@ -58,16 +60,14 @@ done
 %serverbuild
 
 %configure2_5x \
-    --enable-ldapmail=try \
-    --with-ext2direct=no \
-    --enable-ldapmail=yes \
-    --enable-netlink=yes \
-    --enable-rootsbin=yes \
-    --enable-rpcsetquota=yes \
-    --enable-strip-binaries=no
-make
-    --enable-rootsbin 
-
+	--enable-ldapmail=try \
+	--with-ext2direct=no \
+	--enable-ldapmail=yes \
+	--enable-netlink=yes \
+	--enable-rootsbin=yes \
+	--enable-rpcsetquota=yes \
+	--enable-strip-binaries=no \
+	--enable-rootsbin 
 %make
 
 %install
