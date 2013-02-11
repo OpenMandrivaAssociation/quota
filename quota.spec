@@ -106,7 +106,8 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 
 %changelog
-* Sun Feb 10 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 3.17-11
+* Sun Feb 10 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 4.01-1
+- new version
 - sync patches from fedora
 - cosmetics
 - add buildrequires on pkgconfig(libtirpc)
