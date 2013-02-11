@@ -24,6 +24,7 @@ BuildRequires:	tcp_wrappers-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(dbus-1)
+BuildRequires:	openldap-devel
 Requires:	e2fsprogs
 Requires:	initscripts >= 6.38
 Requires:	tcp_wrappers
