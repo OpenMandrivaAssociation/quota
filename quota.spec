@@ -1,23 +1,29 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
-Version:	3.17
-Release:	11
+Version:	4.01
+Release:	1
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
 Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.gz
-Patch0:		quota-3.06-warnquota.patch
-Patch1:		quota-3.17-no-stripping.patch
+Patch0:		quota-4.01-warnquota.patch
 Patch2:		quota-3.06-man-page.patch
 Patch3:		quota-3.06-pie.patch
 Patch4:		quota-3.13-wrong-ports.patch
-Patch5:		quota-3.16-helpoption.patch
-Patch6:		quota-3.16-quotaoffhelp.patch
-Patch50:	quota-tools-default-conf.patch
+# Submitted to upstream, SF#3571486
+Patch7:		quota-4.01-Make-group-warning-message-more-official.patch
+# In upstream after 4.01, SF#3571589
+Patch8:		quota-4.01-define_charset_in_mail.patch
+# In upstream after 4.01, SF#3602786, bug #846296
+Patch9:		quota-4.01-Do-not-fiddle-with-quota-files-on-XFS-and-GFS.patch
+# In upstream after 4.01, SF#3602777
+Patch10:	quota-4.01-quotacheck-Make-sure-d-provides-at-least-as-much-inf.patch
 BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	gettext
 BuildRequires:	tcp_wrappers-devel
 BuildRequires:	pkgconfig(libtirpc)
+BuildRequires:	pkgconfig(libnl-3.0)
+BuildRequires:	pkgconfig(dbus-1)
 Requires:	e2fsprogs
 Requires:	initscripts >= 6.38
 Requires:	tcp_wrappers
@@ -29,19 +35,17 @@ limiting users' and or groups' disk usage, per filesystem.
 Install quota if you want to monitor and/or limit user/group disk usage.
 
 %prep
-
 %setup -q -n quota-tools
 %patch0 -p1
-%patch1 -p1
 %patch2 -p1
 %ifnarch ppc ppc64
 %patch3 -p1
 %endif
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-
-%patch50 -p1 -b .default-conf
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
 
 #fix typos/mistakes in localized documentation
 for pofile in $(find ./po/*.p*)
@@ -55,6 +59,12 @@ done
 %configure2_5x \
     --enable-ldapmail=try \
     --with-ext2direct=no \
+    --enable-ldapmail=yes \
+    --enable-netlink=yes \
+    --enable-rootsbin=yes \
+    --enable-rpcsetquota=yes \
+    --enable-strip-binaries=no
+make
     --enable-rootsbin 
 
 %make
@@ -96,6 +106,7 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 %changelog
 * Sun Feb 10 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 3.17-11
+- sync patches from fedora
 - cosmetics
 - add buildrequires on pkgconfig(libtirpc)
 
