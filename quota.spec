@@ -25,6 +25,7 @@ BuildRequires:	tcp_wrappers-devel
 BuildRequires:	pkgconfig(libtirpc)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(dbus-1)
+BuildRequires:	pkgconfig(libnl-1)
 BuildRequires:	openldap-devel
 Requires:	e2fsprogs
 Requires:	initscripts >= 6.38
@@ -107,6 +108,7 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 %changelog
 * Sun Feb 10 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 4.01-1
+- fix buildrequires
 - new version
 - sync patches from fedora
 - cosmetics
