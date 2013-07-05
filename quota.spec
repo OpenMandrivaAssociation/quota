@@ -114,6 +114,7 @@ make -C .uclibc install ROOTDIR=%{buildroot} \
              DEF_SBIN_MODE=755 \
              DEF_MAN_MODE=644 \
              STRIP=""
+mv %{buildroot}/sbin %{buildroot}%{uclibc_root}
 rm -r %{buildroot}%{uclibc_root}%{_includedir}
 %endif
 
@@ -146,6 +147,7 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 
 %if %{with uclibc}
 %files -n uclibc-%{name}
+%{uclibc_root}/sbin/*
 %{uclibc_root}%{_bindir}/*
 %{uclibc_root}%{_sbindir}/*
 %endif
