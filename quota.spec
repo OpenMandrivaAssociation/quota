@@ -1,3 +1,5 @@
+%bcond_without	uclibc
+
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.01
@@ -37,6 +39,15 @@ limiting users' and or groups' disk usage, per filesystem.
 
 Install quota if you want to monitor and/or limit user/group disk usage.
 
+%package -n	uclibc-%{name}
+Summary:	uClibc build of quota tools
+
+%description -n	uclibc-%{name}
+The quota package contains system administration tools for monitoring and
+limiting users' and or groups' disk usage, per filesystem.
+
+Install quota if you want to monitor and/or limit user/group disk usage.
+
 %prep
 %setup -q -n quota-tools
 %patch0 -p1
@@ -57,8 +68,29 @@ do
    sed -i 's/editting/editing/' "$pofile"
 done
 
+%if %{with uclibc}
+mkdir -p .uclibc
+cp -a * .uclibc
+%endif
+
 %build
 %serverbuild
+
+%if %{with uclibc}
+mkdir -p .uclibc
+pushd .uclibc
+%uclibc_configure \
+	--enable-ldapmail=try \
+	--with-ext2direct=no \
+	--enable-ldapmail=no \
+	--enable-netlink=no \
+	--enable-rootsbin=yes \
+	--enable-rpcsetquota=yes \
+	--enable-strip-binaries=no \
+	--enable-rootsbin 
+%make CC="%{uclibc_cc}" RPCLIB=""
+popd
+%endif
 
 %configure2_5x \
 	--enable-ldapmail=try \
@@ -77,6 +109,15 @@ install -d %{buildroot}%{_sysconfdir}
 install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_mandir}/{man1,man2,man3,man8}
+
+%if %{with uclibc}
+make -C .uclibc install ROOTDIR=%{buildroot} \
+             DEF_BIN_MODE=755 \
+             DEF_SBIN_MODE=755 \
+             DEF_MAN_MODE=644 \
+             STRIP=""
+rm -r %{buildroot}%{uclibc_root}%{_includedir}
+%endif
 
 make install ROOTDIR=%{buildroot} \
              DEF_BIN_MODE=755 \
@@ -105,6 +146,11 @@ rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
 %{_includedir}/rpcsvc/*
 %{_mandir}/man?/*
 
+%if %{with uclibc}
+%files -n uclibc-%{name}
+%{uclibc_root}%{_bindir}/*
+%{uclibc_root}%{_sbindir}/*
+%endif
 
 %changelog
 * Sun Feb 10 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 4.01-1
