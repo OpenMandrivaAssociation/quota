@@ -3,7 +3,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.01
-Release:	1
+Release:	2
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 URL:		http://sourceforge.net/projects/linuxquota/
@@ -80,8 +80,7 @@ cp -a * .uclibc
 mkdir -p .uclibc
 pushd .uclibc
 %uclibc_configure \
-	--enable-ldapmail=try \
-	--with-ext2direct=no \
+	--enable-ext2direct=yes \
 	--enable-ldapmail=no \
 	--enable-netlink=no \
 	--enable-rootsbin=yes \
@@ -93,8 +92,7 @@ popd
 %endif
 
 %configure2_5x \
-	--enable-ldapmail=try \
-	--with-ext2direct=no \
+	--enable-ext2direct=yes \
 	--enable-ldapmail=yes \
 	--enable-netlink=yes \
 	--enable-rootsbin=yes \
