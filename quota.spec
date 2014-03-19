@@ -1,7 +1,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.01
-Release:	5
+Release:	6
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 Url:		http://sourceforge.net/projects/linuxquota/
@@ -35,6 +35,15 @@ The quota package contains system administration tools for monitoring and
 limiting users' and or groups' disk usage, per filesystem.
 
 Install quota if you want to monitor and/or limit user/group disk usage.
+
+%package devel
+Summary:	Development files for %{name}
+Group:		Development/Other
+Requires:	%{name} = %{version}-%{release}
+Conflicts:	%{name} < 4.01-6
+
+%description devel
+This package contains the development files for %{name}.
 
 %prep
 %setup -qn quota-tools
@@ -90,9 +99,6 @@ rm -f %{buildroot}%{_sbindir}/quot
 rm -f %{buildroot}%{_sbindir}/xqmstats
 rm -f %{buildroot}%{_mandir}/man8/quot.*
 rm -f %{buildroot}%{_mandir}/man8/xqmstats.*
-# MD why do we have header files in the main pkg? if needed create a
-# separate devel pkg
-rm -fr %{buildroot}%{_includedir}/rpcsvc
 
 %find_lang %{name}
 
@@ -104,5 +110,11 @@ rm -fr %{buildroot}%{_includedir}/rpcsvc
 /sbin/*
 %{_bindir}/*
 %{_sbindir}/*
-%{_mandir}/man?/*
+%{_mandir}/man1/*
+%{_mandir}/man8/*
+
+%files devel
+%dir %{_includedir}/rpcsvc
+%{_includedir}/rpcsvc/*
+%{_mandir}/man3/*
 
