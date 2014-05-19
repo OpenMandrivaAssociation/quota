@@ -1,0 +1,151 @@
+From 0ada9c13f9b8299ff607b66c37022ce2a3c4444b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Wed, 9 Jan 2013 17:00:44 +0100
+Subject: [PATCH 1/5] Recognize units at block limits by setquota
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This patch allows to specify suffixes at block limits on setquota
+command line. Binary units K, M, G, T are implemented. Numeric value
+without suffix is equivatent to kibibytes as before. This is
+complementary functionality to `quota -s'.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ quota.h    |  2 ++
+ quotasys.c | 31 +++++++++++++++++++++++++++++++
+ quotasys.h |  3 +++
+ setquota.8 |  7 +++++++
+ setquota.c | 17 +++++++++++++++--
+ 5 files changed, 58 insertions(+), 2 deletions(-)
+
+diff --git a/quota.h b/quota.h
+index ac034d0..6787eab 100644
+--- a/quota.h
++++ b/quota.h
+@@ -2,9 +2,11 @@
+ #define GUARD_QUOTA_H
+ 
+ #include <sys/types.h>
++#include <stdint.h>
+ 
+ typedef u_int32_t qid_t;	/* Type in which we store ids in memory */
+ typedef int64_t qsize_t;	/* Type in which we store size limitations */
++#define QSIZE_MAX INT64_MAX /* Maximum value storable in qsize_t */
+ 
+ #define MAXQUOTAS 2
+ #define USRQUOTA  0		/* element used for user quotas */
+diff --git a/quotasys.c b/quotasys.c
+index 03f678a..5c1464f 100644
+--- a/quotasys.c
++++ b/quotasys.c
+@@ -367,6 +367,37 @@ void space2str(qsize_t space, char *buf, int format)
+ }
+ 
+ /*
++ * Convert block number with unit from string to quota blocks.
++ * Return NULL on success, static error message otherwise.
++ */
++const char *str2space(const char *string, qsize_t *space)
++{
++	char *unit;
++	unsigned long long int number;
++	int unit_shift;
++       
++	number = strtoull(string, &unit, 0);
++	if (ULLONG_MAX == number)
++		return _("Integer overflow while parsing space number.");
++
++	if (!unit || unit[0] == '\0' || !strcmp(unit, _("K")))
++		unit_shift = 0;
++	else if (!strcmp(unit, _("M")))
++		unit_shift = 10;
++	else if (!strcmp(unit, _("G")))
++		unit_shift = 20;
++	else if (!strcmp(unit, _("T")))
++		unit_shift = 30;
++	else
++		return _("Unknown space binary unit. "
++			"Valid units are K, M, G, T.");
++	if (number > (QSIZE_MAX >> unit_shift))
++		return _("Integer overflow while interpreting space unit.");
++	*space = number << unit_shift;
++	return NULL;
++}
++
++/*
+  *  Convert number to some nice short form for printing
+  */
+ void number2str(unsigned long long num, char *buf, int format)
+diff --git a/quotasys.h b/quotasys.h
+index 1cebf7e..0cc2c4c 100644
+--- a/quotasys.h
++++ b/quotasys.h
+@@ -103,6 +103,9 @@ int str2timeunits(time_t, char *, time_t *);
+ /* Convert number in quota blocks to short printable form */
+ void space2str(qsize_t, char *, int);
+ 
++/* Convert block number with unit from string to quota blocks */
++const char *str2space(const char *string, qsize_t *space);
++
+ /* Convert number to short printable form */
+ void number2str(unsigned long long, char *, int);
+ 
+diff --git a/setquota.8 b/setquota.8
+index db9d054..e4511c4 100644
+--- a/setquota.8
++++ b/setquota.8
+@@ -182,6 +182,13 @@ Go through all filesystems with quota in
+ .B /etc/mtab
+ and perform setting.
+ .PP
++.I block-softlimit
++and
++.I block-hardlimit
++are interpreted as multiples of kibibyte (1024 bytes) blocks by default.
++Symbols K, M, G, and T can be appended to numeric value to express kibibytes,
++mebibytes, gibibytes, and tebibytes.
++.PP
+ To disable a quota, set the corresponding parameter to 0. To change quotas
+ for several filesystems, invoke once for each filesystem.
+ .PP
+diff --git a/setquota.c b/setquota.c
+index f609dc7..ccac7f7 100644
+--- a/setquota.c
++++ b/setquota.c
+@@ -93,6 +93,19 @@ static qsize_t parse_unum(char *str, char *msg)
+ 	return ret;
+ }
+ 
++/* Convert block size to number - print errstr message in case of failure */
++static qsize_t parse_blocksize(const char *str, const char *msg)
++{
++	qsize_t ret;
++	const char *error = str2space(str, &ret);
++
++	if (error) {
++		errstr(_("%s: %s: %s\n"), msg, str, error);
++		usage();
++	}
++	return ret;
++}
++
+ /* Convert our flags to quota type */
+ static inline int flag2type(int flags)
+ {
+@@ -226,8 +239,8 @@ static void parse_options(int argcnt, char **argstr)
+ 	if (!(flags & (FL_GRACE | FL_BATCH))) {
+ 		id = name2id(argstr[optind++], flag2type(flags), !!(flags & FL_NUMNAMES), NULL);
+ 		if (!(flags & (FL_GRACE | FL_INDIVIDUAL_GRACE | FL_PROTO))) {
+-			toset.dqb_bsoftlimit = parse_unum(argstr[optind++], _("Bad block softlimit"));
+-			toset.dqb_bhardlimit = parse_unum(argstr[optind++], _("Bad block hardlimit"));
++			toset.dqb_bsoftlimit = parse_blocksize(argstr[optind++], _("Bad block softlimit"));
++			toset.dqb_bhardlimit = parse_blocksize(argstr[optind++], _("Bad block hardlimit"));
+ 			toset.dqb_isoftlimit = parse_unum(argstr[optind++], _("Bad inode softlimit"));
+ 			toset.dqb_ihardlimit = parse_unum(argstr[optind++], _("Bad inode hardlimit"));
+ 		}
+-- 
+1.8.1.4
+

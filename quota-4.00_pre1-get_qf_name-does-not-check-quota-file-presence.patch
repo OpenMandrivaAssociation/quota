@@ -1,0 +1,39 @@
+From 1c3bc6d34439f353ea00239dc1ca31239823bb4f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Fri, 1 Jul 2011 10:22:10 +0200
+Subject: [PATCH 2/2] get_qf_name() does not check quota file presence
+
+Old error messsage stated a quota file does not exist despite fact
+get_qf_name() does not check the file existence. It constructs the
+file name only.
+
+This lead to misleading message when running initial `quotacheck -c'
+on extended file system mounted with usrquota option only.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ quotacheck.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/quotacheck.c b/quotacheck.c
+index 112596b..d8515af 100644
+--- a/quotacheck.c
++++ b/quotacheck.c
+@@ -873,12 +873,12 @@ static int sub_quota_file(struct mntent *mnt, int qtype, int ftype)
+ 
+ 	debug(FL_DEBUG, _("Substracting space used by old %s quota file.\n"), type2name(ftype));
+ 	if (get_qf_name(mnt, ftype, cfmt, 0, &filename) < 0) {
+-		debug(FL_VERBOSE, _("Old %s file not found. Usage will not be substracted.\n"), type2name(ftype));
++		debug(FL_VERBOSE, _("Old %s file name could not been determined. Usage will not be substracted.\n"), type2name(ftype));
+ 		return 0;
+ 	}
+ 
+ 	if (stat(filename, &st) < 0) {
+-		debug(FL_VERBOSE, _("Cannot stat old %s quota file: %s\n"), type2name(ftype), strerror(errno));
++		debug(FL_VERBOSE, _("Cannot stat old %s quota file %s: %s. Usage will not be substracted.\n"), type2name(ftype), filename, strerror(errno));
+ 		free(filename);
+ 		return 0;
+ 	}
+-- 
+1.7.6
+

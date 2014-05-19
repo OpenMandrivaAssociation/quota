@@ -1,0 +1,105 @@
+From 73316c7746e89896c63fc49f24cafe32335df288 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Wed, 9 Jan 2013 18:16:14 +0100
+Subject: [PATCH 5/5] Recognize units at inode limits by edquota
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With this patch, it's possible to specify inode values including
+decimal units in the editor run by edquota.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ edquota.8  |  4 ++++
+ quotaops.c | 26 ++++++++++++++++++++++----
+ setquota.c |  2 --
+ 3 files changed, 26 insertions(+), 6 deletions(-)
+
+diff --git a/edquota.8 b/edquota.8
+index 2617068..fefb5d4 100644
+--- a/edquota.8
++++ b/edquota.8
+@@ -68,6 +68,10 @@ Block usage and limits are reported and interpereted as multiples of kibibyte
+ (1024 bytes) blocks by default. Symbols K, M, G, and T can be appended to
+ numeric value to express kibibytes, mebibytes, gibibytes, and tebibytes.
+ .PP
++Inode usage and limits are interpreted literally. Symbols k, m, g, and t can
++be appended to numeric value to express multiples of 10^3, 10^6, 10^9, and
++10^12 inodes.
++.PP
+ Users are permitted to exceed their soft limits for a grace period that
+ may be specified per filesystem.  Once the grace period has expired, the
+ soft limit is enforced as a hard limit.
+diff --git a/quotaops.c b/quotaops.c
+index 32e21da..175a945 100644
+--- a/quotaops.c
++++ b/quotaops.c
+@@ -310,11 +310,11 @@ int readprivs(struct dquot *qlist, int infd)
+ {
+ 	FILE *fd;
+ 	int cnt;
+-	qsize_t blocks, bsoft, bhard;
+-	long long inodes, isoft, ihard;
++	qsize_t blocks, bsoft, bhard, inodes, isoft, ihard;
+ 	struct dquot *q;
+ 	char fsp[BUFSIZ], line[BUFSIZ];
+ 	char blocksstring[BUFSIZ], bsoftstring[BUFSIZ], bhardstring[BUFSIZ];
++	char inodesstring[BUFSIZ], isoftstring[BUFSIZ], ihardstring[BUFSIZ];
+ 	const char *error;
+ 
+ 	lseek(infd, 0, SEEK_SET);
+@@ -328,9 +328,9 @@ int readprivs(struct dquot *qlist, int infd)
+ 	fgets(line, sizeof(line), fd);
+ 
+ 	while (fgets(line, sizeof(line), fd)) {
+-		cnt = sscanf(line, "%s %s %s %s %llu %llu %llu",
++		cnt = sscanf(line, "%s %s %s %s %s %s %s",
+ 			     fsp, blocksstring, bsoftstring, bhardstring,
+-			     &inodes, &isoft, &ihard);
++			     inodesstring, isoftstring, ihardstring);
+ 
+ 		if (cnt != 7) {
+ 			errstr(_("Bad format:\n%s\n"), line);
+@@ -354,6 +354,24 @@ int readprivs(struct dquot *qlist, int infd)
+ 				bhardstring, error);
+ 			return -1;
+ 		}
++		error = str2number(inodesstring, &inodes);
++		if (error) {
++			errstr(_("Bad inode usage: %s: %s\n"),
++				inodesstring, error);
++			return -1;
++		}
++		error = str2number(isoftstring, &isoft);
++		if (error) {
++			errstr(_("Bad inode soft limit: %s: %s\n"),
++				isoftstring, error);
++			return -1;
++		}
++		error = str2number(ihardstring, &ihard);
++		if (error) {
++			errstr(_("Bad inode hard limit: %s: %s\n"),
++				ihardstring, error);
++			return -1;
++		}
+ 
+ 		merge_limits_to_list(qlist, fsp, blocks, bsoft, bhard, inodes, isoft, ihard);
+ 	}
+diff --git a/setquota.c b/setquota.c
+index 19449ad..cc5fee8 100644
+--- a/setquota.c
++++ b/setquota.c
+@@ -406,8 +406,6 @@ static int read_entry(qid_t *id, qsize_t *isoftlimit, qsize_t *ihardlimit, qsize
+ 		}
+ 		break;
+ 	}
+-	*isoftlimit = is;
+-	*ihardlimit = ih;
+ 	return 0;
+ }
+ 
+-- 
+1.8.1.4
+

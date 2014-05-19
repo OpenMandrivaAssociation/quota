@@ -1,0 +1,96 @@
+From 801386a31d0ae47779cf74cbb4f343be346a07db Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Wed, 6 Mar 2013 11:21:50 +0100
+Subject: [PATCH 1/4] Add quotasync(1) manual page
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ quotasync.1 | 72 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
+ create mode 100644 quotasync.1
+
+diff --git a/quotasync.1 b/quotasync.1
+new file mode 100644
+index 0000000..e968403
+--- /dev/null
++++ b/quotasync.1
+@@ -0,0 +1,72 @@
++.TH QUOTASYNC 1
++.SH NAME
++quotasync \- synchronize in-kernel file system usage and limits to disk format
++.SH SYNOPSIS
++.B quotasync
++[
++.B -ug
++] 
++.IR mount-point ...
++.br
++.B quotasync
++[
++.B -ug
++] 
++.B -a
++.br
++.B quotasync
++.B -h
++|
++.B -V
++.SH DESCRIPTION
++.B quotasync
++flushes file system usage and limits from kernel memory to quota files stored
++in the file system. By default only the user quotas are synchronized.
++.P
++This tool can be useful if you want to display accurate quotas by tools that
++parse quota files, like
++.BR repquota (8).
++.SH OPTIONS
++.TP
++.B -u, --user
++Synchronize user usage and limits.
++.TP
++.B -g, --group
++Synchronize group usage and limits.
++.TP
++.B -a, --all
++Synchronize usage and limits on all file systems. You have to specify this
++option or to specify desired file systems.
++.TP
++.B -V, --version
++Show program version information and exit.
++.TP
++.B -h, --help
++Show program usage and exit.
++.SH DIAGNOSTICS
++If requested synchronization fails, or invalid option is given,
++.B quotasync
++will terminate with non-zero exit code. Otherwise it will return zero.
++.SH FILES
++.PD 0
++.TP 16
++.B aquota.user " or " aquota.group
++Quota file at the file system root (version 2 quota, non-XFS/GFS2 file systems).
++.TP 16
++.B quota.user " or " quota.group
++Quota file at the file system root (version 1 quota, non-XFS/GFS2 file systems).
++.TP 16
++.B /etc/mtab
++List of mounted file systems maintained by user space.
++.TP 16
++.B /proc/mounts
++List of mounted file systems maintained by kernel.
++.PD
++.SH SEE ALSO
++.BR quota (1),
++.BR quotactl (2),
++.BR mount (8),
++.BR quotacheck (8),
++.BR quotaon (8),
++.BR repquota (8),
++.BR warnquota (8).
+-- 
+1.8.1.4
+

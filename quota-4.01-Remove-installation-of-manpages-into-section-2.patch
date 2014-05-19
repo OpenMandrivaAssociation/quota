@@ -1,0 +1,41 @@
+From 246dd4960e6878f3ff2e1fe34ef978bcb21e8d03 Mon Sep 17 00:00:00 2001
+From: Carsten Grohmann <cgrohmann@users.sf.net>
+Date: Wed, 14 Aug 2013 18:16:46 +0200
+Subject: [PATCH] Remove installation of manpages into section 2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+There are no manpages in this section in quota tools anymore. So just
+remove the installation commands.
+
+Signed-off-by: Carsten Grohmann <cgrohmann@users.sf.net>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ Makefile.in | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index c81d7a9..84fafce 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -89,7 +89,6 @@ install: all @INSTMO@
+ 	-$(INSTALL) -m $(DEF_CONF_MODE) quotatab $(ROOTDIR)$(sysconfdir)
+ 	-$(INSTALL) -m $(DEF_CONF_MODE) quotagrpadmins $(ROOTDIR)$(sysconfdir)
+ 	-mkdir -p $(ROOTDIR)$(mandir)/man1
+-	-mkdir -p $(ROOTDIR)$(mandir)/man2
+ 	-mkdir -p $(ROOTDIR)$(mandir)/man3
+ 	-mkdir -p $(ROOTDIR)$(mandir)/man8
+ 	-$(INSTALL) -m 755 -d $(ROOTDIR)$(includedir)/rpcsvc
+@@ -100,7 +99,6 @@ ifneq ($(NETLINKLIBS),)
+ 	-$(INSTALL) $(STRIP) -m $(DEF_SBIN_MODE) quota_nld $(ROOTDIR)$(sbindir)
+ endif
+ 	-$(INSTALL) -m $(DEF_MAN_MODE) *.1 $(ROOTDIR)$(mandir)/man1
+-	-$(INSTALL) -m $(DEF_MAN_MODE) *.2 $(ROOTDIR)$(mandir)/man2
+ 	-$(INSTALL) -m $(DEF_MAN_MODE) *.3 $(ROOTDIR)$(mandir)/man3
+ 	-$(INSTALL) -m $(DEF_MAN_MODE) *.8 $(ROOTDIR)$(mandir)/man8
+ 
+-- 
+1.8.3.1
+

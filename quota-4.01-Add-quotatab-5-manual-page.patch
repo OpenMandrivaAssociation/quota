@@ -1,0 +1,78 @@
+From e0d078f1fdf1c91602d72b402e3accc3b7c8cb58 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Thu, 17 Oct 2013 14:40:35 +0200
+Subject: [PATCH 2/4] Add quotatab(5) manual page
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ quotatab.5  | 31 +++++++++++++++++++++++++++++++
+ warnquota.8 |  5 ++++-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+ create mode 100644 quotatab.5
+
+diff --git a/quotatab.5 b/quotatab.5
+new file mode 100644
+index 0000000..96d3608
+--- /dev/null
++++ b/quotatab.5
+@@ -0,0 +1,31 @@
++.TH QUOTATAB 5
++.SH NAME
++quotatab \- Descriptions of devices with disk quotas
++.SH SYNOPSIS
++.B /etc/quotatab
++.SH DESCRIPTION
++The
++.B quotatab
++file lists human descriptions of devices for the purpose of
++.BR warnquota (8)
++notifications.
++.P
++Each line consists of a device path name followed by a colon and
++a description. White space, apostrophe, and double quote characters
++surrounding the names and descriptions will be stripped. The description field
++can encode a new-line as a pipe character.
++.P
++Empty lines or lines starting with a hash sign or a semicolon are ignored.
++.SH EXAMPLE
++.PP
++# comment
++.RS 0
++/dev/sda2: Home directories.|This becomes second line.
++.SH FILES
++.PD 0 
++.TP 20 
++.B /etc/quotatab
++list of device descriptions
++.PD 
++.SH SEE ALSO
++.BR warnquota (8).
+diff --git a/warnquota.8 b/warnquota.8
+index 836290d..b998f19 100644
+--- a/warnquota.8
++++ b/warnquota.8
+@@ -44,7 +44,9 @@ Use
+ .I quotatab
+ instead of
+ .I /etc/quotatab
+-as file with device description strings (see example file for syntax).
++as file with device description strings (see
++.BR quotatab (5)
++for syntax).
+ .TP
+ .B -c, --config=\f2configfile\f1
+ Use
+@@ -104,6 +106,7 @@ default set of users
+ .PD
+ .SH "SEE ALSO"
+ .BR quota (1),
++.BR quotatab (5),
+ .BR quotagrpadmins (5),
+ .BR cron (8),
+ .BR edquota (8).
+-- 
+1.8.3.1
+
