@@ -3,7 +3,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.01
-Release:	8
+Release:	9
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 Url:		http://sourceforge.net/projects/linuxquota/
@@ -57,7 +57,6 @@ Patch22:	quota-4.01-Improve-rcp.rquota-8-manual-page.patch
 # bug #1072769
 Patch23:	quota-4.01-Prevent-from-grace-period-overflow-in-RPC-transport.patch
 
-
 Patch111:	quota-4.01-libtirpc.patch
 BuildRequires:	gettext
 BuildRequires:	openldap-devel
@@ -68,7 +67,7 @@ BuildRequires:	pkgconfig(libnl-1)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(libtirpc)
 Requires:	e2fsprogs
-Requires:	initscripts >= 6.38
+Requires:	initscripts
 Requires:	tcp_wrappers
 
 %description
@@ -77,47 +76,96 @@ limiting users' and or groups' disk usage, per filesystem.
 
 Install quota if you want to monitor and/or limit user/group disk usage.
 
-%package -n	uclibc-%{name}
+%files -f %{name}.lang
+%doc Changelog README.ldap-support README.mailserver ldap-scripts
+/sbin/*
+%{_bindir}/*
+%{_sbindir}/*
+%exclude %{_sbindir}/quota_nld
+%exclude %{_sbindir}/warnquota
+%{_mandir}/man1/*
+%{_mandir}/man8/*
+%exclude %{_mandir}/man8/quota_nld.8*
+%exclude %{_mandir}/man8/warnquota.8*
+
+#----------------------------------------------------------------------------
+
+%if %{with uclibc}
+%package -n uclibc-%{name}
 Summary:	uClibc build of quota tools
 Group:		System/Configuration/Other
 
-%description -n	uclibc-%{name}
+%description -n uclibc-%{name}
 The quota package contains system administration tools for monitoring and
 limiting users' and or groups' disk usage, per filesystem.
 
 Install quota if you want to monitor and/or limit user/group disk usage.
 
-%package	nld
+%files -n uclibc-%{name}
+%{uclibc_root}/sbin/*
+%{uclibc_root}%{_bindir}/*
+%{uclibc_root}%{_sbindir}/*
+%endif
+
+#----------------------------------------------------------------------------
+
+%package nld
 Summary:	quota_nld daemon
 Group:		System/Configuration/Other
 Conflicts:	quota < 4.01-7
 
-%description	nld
+%description nld
 Daemon that listens on netlink socket and processes received quota warnings.
 Note, that you have to enable the kernel support for sending quota messages
 over netlink (in Filesystems->Quota menu). The daemon supports forwarding
 warning messages to the system D-Bus (so that desktop manager can display
 a dialog) and writing them to the terminal user has last accessed.
 
+%files nld
+%config(noreplace) %{_sysconfdir}/sysconfig/quota_nld
+%{_unitdir}/quota_nld.service
+%attr(0755,root,root) %{_sbindir}/quota_nld
+%attr(0644,root,root) %{_mandir}/man8/quota_nld.8*
+%doc Changelog
 
-%package	warnquota
+#----------------------------------------------------------------------------
+
+%package warnquota
 Summary:	Send e-mail to users over quota
 Group:		System/Configuration/Other
 Conflicts:	quota < 4.01-7
 
-%description	warnquota
+%description warnquota
 Utility that checks disk quota for each local file system and mails a warning
 message to those users who have reached their soft limit.  It is typically run
 via cron(8).
 
-%package	devel
+%files warnquota
+%config(noreplace) %{_sysconfdir}/quotagrpadmins
+%config(noreplace) %{_sysconfdir}/quotatab
+%config(noreplace) %{_sysconfdir}/warnquota.conf
+%{_sbindir}/warnquota
+%{_mandir}/man5/*
+%{_mandir}/man8/warnquota.8*
+%doc Changelog README.ldap-support README.mailserver
+
+#----------------------------------------------------------------------------
+
+%package devel
 Summary:	Development files for %{name}
 Group:		Development/Other
 Requires:	%{name} = %{EVRD}
 Conflicts:	quota < 4.01-6
 
-%description	devel
+%description devel
 This package contains the development files for %{name}.
+
+%files devel
+%dir %{_includedir}/rpcsvc
+%{_includedir}/rpcsvc/*
+%{_mandir}/man3/*
+
+#----------------------------------------------------------------------------
 
 %prep
 %setup -qn quota-tools
@@ -219,42 +267,3 @@ install -p -m644 %{SOURCE2} -D %{buildroot}%{_sysconfdir}/sysconfig/quota_nld
 
 %find_lang %{name}
 
-%files -f %{name}.lang
-%doc Changelog README.ldap-support README.mailserver ldap-scripts
-/sbin/*
-%{_bindir}/*
-%{_sbindir}/*
-%exclude %{_sbindir}/quota_nld
-%exclude %{_sbindir}/warnquota
-%{_mandir}/man1/*
-%{_mandir}/man8/*
-%exclude %{_mandir}/man8/quota_nld.8*
-%exclude %{_mandir}/man8/warnquota.8*
-
-%if %{with uclibc}
-%files -n uclibc-%{name}
-%{uclibc_root}/sbin/*
-%{uclibc_root}%{_bindir}/*
-%{uclibc_root}%{_sbindir}/*
-%endif
-
-%files nld
-%config(noreplace) %{_sysconfdir}/sysconfig/quota_nld
-%{_unitdir}/quota_nld.service
-%attr(0755,root,root) %{_sbindir}/quota_nld
-%attr(0644,root,root) %{_mandir}/man8/quota_nld.8*
-%doc Changelog
-
-%files warnquota
-%config(noreplace) %{_sysconfdir}/quotagrpadmins
-%config(noreplace) %{_sysconfdir}/quotatab
-%config(noreplace) %{_sysconfdir}/warnquota.conf
-%{_sbindir}/warnquota
-%{_mandir}/man5/*
-%{_mandir}/man8/warnquota.8*
-%doc Changelog README.ldap-support README.mailserver
-
-%files devel
-%dir %{_includedir}/rpcsvc
-%{_includedir}/rpcsvc/*
-%{_mandir}/man3/*
