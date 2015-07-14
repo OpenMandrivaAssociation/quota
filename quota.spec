@@ -1,4 +1,5 @@
 %bcond_with	uclibc
+%define _disable_lto 1
 
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
