@@ -1,4 +1,4 @@
-%bcond_without	uclibc
+%bcond_with	uclibc
 
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
@@ -66,6 +66,9 @@ BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	pkgconfig(libnl-1)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(libtirpc)
+%if %{with uclibc}
+BuildRequires:	uClibc-devel 
+%endif
 Requires:	e2fsprogs
 Requires:	initscripts
 Requires:	tcp_wrappers
