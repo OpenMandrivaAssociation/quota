@@ -3,7 +3,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.01
-Release:	11
+Release:	12
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 Url:		http://sourceforge.net/projects/linuxquota/
@@ -227,7 +227,7 @@ pushd .uclibc
 popd
 %endif
 
-%configure2_5x \
+%configure \
 	--enable-ext2direct=yes \
 	--enable-ldapmail=yes \
 	--enable-netlink=yes \
@@ -252,6 +252,7 @@ make -C .uclibc install ROOTDIR=%{buildroot} \
              STRIP=""
 mv %{buildroot}/sbin %{buildroot}%{uclibc_root}
 rm -r %{buildroot}%{uclibc_root}%{_includedir}
+rm -rf %{buildroot}%{uclibc_root}%{_localedir}
 %endif
 
 make install ROOTDIR=%{buildroot} \
