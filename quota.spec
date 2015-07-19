@@ -4,7 +4,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.01
-Release:	12
+Release:	13
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 Url:		http://sourceforge.net/projects/linuxquota/
