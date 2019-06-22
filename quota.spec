@@ -36,7 +36,7 @@ limiting users' and or groups' disk usage, per filesystem.
 Install quota if you want to monitor and/or limit user/group disk usage.
 
 %files -f %{name}.lang
-%doc Changelog README.ldap-support README.mailserver
+%doc Changelog README.ldap-support README.mailserver ldap-scripts
 %doc %{_docdir}/quota/*
 %exclude %{_docdir}/quota/*.c
 %exclude %{_docdir}/quota/ldap-scripts
@@ -62,8 +62,7 @@ Obsoletes:	%{name} < 4.04-3
 This package contains the ldap scripts for %{name}.
 
 %files ldap-scripts
-%doc ldap-scripts
-%doc %{_docdir}/quota/ldap-scripts
+%{_docdir}/quota/ldap-scripts
 
 #----------------------------------------------------------------------------
 
