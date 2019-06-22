@@ -4,7 +4,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.04
-Release:	2
+Release:	3
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 Url:		http://sourceforge.net/projects/linuxquota/
@@ -36,9 +36,10 @@ limiting users' and or groups' disk usage, per filesystem.
 Install quota if you want to monitor and/or limit user/group disk usage.
 
 %files -f %{name}.lang
-%doc Changelog README.ldap-support README.mailserver ldap-scripts
+%doc Changelog README.ldap-support README.mailserver
 %doc %{_docdir}/quota/*
 %exclude %{_docdir}/quota/*.c
+%exclude %{_docdir}/quota/ldap-scripts
 /sbin/*
 %{_bindir}/*
 %{_sbindir}/*
@@ -48,6 +49,21 @@ Install quota if you want to monitor and/or limit user/group disk usage.
 %{_mandir}/man8/*
 %exclude %{_mandir}/man8/quota_nld.8*
 %exclude %{_mandir}/man8/warnquota.8*
+
+#----------------------------------------------------------------------------
+
+%package ldap-scripts
+Summary:	ldap-scripts for %{name}
+Group:		System/Configuration/Other
+Requires:	%{name} = %{EVRD}
+Obsoletes:	%{name} < 4.04-3
+
+%description ldap-scripts
+This package contains the ldap scripts for %{name}.
+
+%files ldap-scripts
+%doc ldap-scripts
+%doc %{_docdir}/quota/ldap-scripts
 
 #----------------------------------------------------------------------------
 
