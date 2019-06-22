@@ -37,7 +37,7 @@ Install quota if you want to monitor and/or limit user/group disk usage.
 
 %files -f %{name}.lang
 %doc Changelog README.ldap-support README.mailserver
-%doc %{_docdir}/quota/*
+%doc %{_docdir}/quota/quota*
 %exclude %{_docdir}/quota/*.c
 %exclude %{_docdir}/quota/ldap-scripts
 /sbin/*
@@ -56,13 +56,13 @@ Install quota if you want to monitor and/or limit user/group disk usage.
 Summary:	ldap-scripts for %{name}
 Group:		System/Configuration/Other
 Requires:	%{name} = %{EVRD}
-Obsoletes:	%{name} < 4.04-3
+Conflicts:	%{name} < 4.04-3
 
 %description ldap-scripts
 This package contains the ldap scripts for %{name}.
 
 %files ldap-scripts
-%{_docdir}/quota/ldap-scripts/*
+%{_datadir}/quota/ldap-scripts/*
 
 #----------------------------------------------------------------------------
 
@@ -102,7 +102,6 @@ a dialog) and writing them to the terminal user has last accessed.
 %{_unitdir}/quota_nld.service
 %attr(0755,root,root) %{_sbindir}/quota_nld
 %attr(0644,root,root) %{_mandir}/man8/quota_nld.8*
-%doc Changelog
 
 #----------------------------------------------------------------------------
 
@@ -123,7 +122,6 @@ via cron(8).
 %{_sbindir}/warnquota
 %{_mandir}/man5/*
 %{_mandir}/man8/warnquota.8*
-%doc Changelog README.ldap-support README.mailserver
 
 #----------------------------------------------------------------------------
 
@@ -190,6 +188,7 @@ install -d %{buildroot}%{_sysconfdir}
 install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_mandir}/{man1,man2,man3,man8}
+install -d %{buildroot}%{_datadir}/%{name}/
 
 %if %{with uclibc}
 %make_install -C .uclibc \
@@ -212,6 +211,8 @@ install -m644 warnquota.conf -D %{buildroot}%{_sysconfdir}/warnquota.conf
 
 install -p -m644 %{SOURCE1} -D %{buildroot}%{_unitdir}/quota_nld.service
 install -p -m644 %{SOURCE2} -D %{buildroot}%{_sysconfdir}/sysconfig/quota_nld
+
+cp -pr ldap-scripts %{buildroot}%{_datadir}/%{name}/
 
 mv %{buildroot}%{_sbindir}/quotacheck %{buildroot}%{_sbindir}/quotaon %{buildroot}%{_sbindir}/quotaoff %{buildroot}/sbin/
 
