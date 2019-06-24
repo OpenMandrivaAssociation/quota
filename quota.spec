@@ -1,4 +1,3 @@
-%bcond_with	uclibc
 %define _disable_lto 1
 
 Summary:	System administration tools for monitoring users' disk usage
@@ -22,9 +21,6 @@ BuildRequires:	pkgconfig(ext2fs)
 BuildRequires:	pkgconfig(libnl-1)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(libtirpc)
-%if %{with uclibc}
-BuildRequires:	uClibc-devel 
-%endif
 Requires:	e2fsprogs
 Requires:	initscripts
 Requires:	tcp_wrappers
@@ -63,25 +59,6 @@ This package contains the ldap scripts for %{name}.
 
 %files ldap-scripts
 %{_datadir}/quota/ldap-scripts/*
-
-#----------------------------------------------------------------------------
-
-%if %{with uclibc}
-%package -n uclibc-%{name}
-Summary:	uClibc build of quota tools
-Group:		System/Configuration/Other
-
-%description -n uclibc-%{name}
-The quota package contains system administration tools for monitoring and
-limiting users' and or groups' disk usage, per filesystem.
-
-Install quota if you want to monitor and/or limit user/group disk usage.
-
-%files -n uclibc-%{name}
-%{uclibc_root}/sbin/*
-%{uclibc_root}%{_bindir}/*
-%{uclibc_root}%{_sbindir}/*
-%endif
 
 #----------------------------------------------------------------------------
 
@@ -151,27 +128,8 @@ do
    sed -i 's/editting/editing/' "$pofile"
 done
 
-%if %{with uclibc}
-mkdir -p .uclibc
-cp -a * .uclibc
-%endif
-
 %build
 %serverbuild
-
-%if %{with uclibc}
-mkdir -p .uclibc
-pushd .uclibc
-%uclibc_configure \
-	--enable-ext2direct=yes \
-	--enable-ldapmail=no \
-	--enable-netlink=no \
-	--enable-rpcsetquota=yes \
-	--enable-strip-binaries=no \
-	--enable-rootsbin 
-%make CC="%{uclibc_cc}" RPCLIB=""
-popd
-%endif
 
 %configure \
 	--enable-ext2direct=yes \
@@ -189,17 +147,6 @@ install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_mandir}/{man1,man2,man3,man8}
 install -d %{buildroot}%{_datadir}/%{name}/
-
-%if %{with uclibc}
-%make_install -C .uclibc \
-             DEF_BIN_MODE=755 \
-             DEF_SBIN_MODE=755 \
-             DEF_MAN_MODE=644 \
-             STRIP=""
-mv %{buildroot}/sbin %{buildroot}%{uclibc_root}
-rm -r %{buildroot}%{uclibc_root}%{_includedir}
-rm -rf %{buildroot}%{uclibc_root}%{_localedir}
-%endif
 
 %make_install \
              DEF_BIN_MODE=755 \
