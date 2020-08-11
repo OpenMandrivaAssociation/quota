@@ -3,7 +3,7 @@
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
 Version:	4.05
-Release:	1
+Release:	2
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 Url:		http://sourceforge.net/projects/linuxquota/
@@ -22,7 +22,6 @@ BuildRequires:	pkgconfig(libnl-1)
 BuildRequires:	pkgconfig(libnl-3.0)
 BuildRequires:	pkgconfig(libtirpc)
 Requires:	e2fsprogs
-Requires:	initscripts
 Requires:	tcp_wrappers
 
 %description
