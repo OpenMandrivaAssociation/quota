@@ -2,8 +2,8 @@
 
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
-Version:	4.05
-Release:	2
+Version:	4.06
+Release:	1
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
 Url:		http://sourceforge.net/projects/linuxquota/
@@ -35,11 +35,9 @@ Install quota if you want to monitor and/or limit user/group disk usage.
 %doc %{_docdir}/quota/quota*
 %exclude %{_docdir}/quota/*.c
 %exclude %{_docdir}/quota/ldap-scripts
-/sbin/*
 %{_bindir}/*
-%{_sbindir}/*
-%exclude %{_sbindir}/quota_nld
-%exclude %{_sbindir}/warnquota
+%exclude %{_bindir}/quota_nld
+%exclude %{_bindir}/warnquota
 %{_mandir}/man1/*
 %{_mandir}/man8/*
 %exclude %{_mandir}/man8/quota_nld.8*
@@ -76,7 +74,7 @@ a dialog) and writing them to the terminal user has last accessed.
 %files nld
 %config(noreplace) %{_sysconfdir}/sysconfig/quota_nld
 %{_unitdir}/quota_nld.service
-%attr(0755,root,root) %{_sbindir}/quota_nld
+%attr(0755,root,root) %{_bindir}/quota_nld
 %attr(0644,root,root) %{_mandir}/man8/quota_nld.8*
 
 #----------------------------------------------------------------------------
@@ -95,7 +93,7 @@ via cron(8).
 %config(noreplace) %{_sysconfdir}/quotagrpadmins
 %config(noreplace) %{_sysconfdir}/quotatab
 %config(noreplace) %{_sysconfdir}/warnquota.conf
-%{_sbindir}/warnquota
+%{_bindir}/warnquota
 %{_mandir}/man5/*
 %{_mandir}/man8/warnquota.8*
 
@@ -124,7 +122,7 @@ This package contains the development files for %{name}.
 #fix typos/mistakes in localized documentation
 for pofile in $(find ./po/*.p*)
 do
-   sed -i 's/editting/editing/' "$pofile"
+	sed -i 's/editting/editing/' "$pofile"
 done
 
 %build
@@ -137,12 +135,10 @@ done
 	--enable-rpcsetquota=yes \
 	--enable-strip-binaries=no \
 	--enable-rootsbin 
-%make
+%make_build
 
 %install
-install -d %{buildroot}/sbin
 install -d %{buildroot}%{_sysconfdir}
-install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_bindir}
 install -d %{buildroot}%{_mandir}/{man1,man2,man3,man8}
 install -d %{buildroot}%{_datadir}/%{name}/
@@ -159,7 +155,5 @@ install -p -m644 %{SOURCE1} -D %{buildroot}%{_unitdir}/quota_nld.service
 install -p -m644 %{SOURCE2} -D %{buildroot}%{_sysconfdir}/sysconfig/quota_nld
 
 cp -pr ldap-scripts %{buildroot}%{_datadir}/%{name}/
-
-mv %{buildroot}%{_sbindir}/quotacheck %{buildroot}%{_sbindir}/quotaon %{buildroot}%{_sbindir}/quotaoff %{buildroot}/sbin/
 
 %find_lang %{name}
