@@ -2,7 +2,7 @@
 
 Summary:	System administration tools for monitoring users' disk usage
 Name:		quota
-Version:	4.06
+Version:	4.09
 Release:	1
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
