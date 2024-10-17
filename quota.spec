@@ -6,7 +6,7 @@ Version:	4.09
 Release:	2
 License:	BSD and GPLv2+
 Group:		System/Configuration/Other
-Url:		http://sourceforge.net/projects/linuxquota/
+Url:		https://sourceforge.net/projects/linuxquota/
 Source0:	http://prdownloads.sourceforge.net/linuxquota/%{name}-%{version}.tar.gz
 Source1:	%{name}.rpmlintrc
 Source2:	quota_nld.service
