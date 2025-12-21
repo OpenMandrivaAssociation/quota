@@ -13,6 +13,11 @@ Source2:	quota_nld.service
 Source3:	quota_nld.sysconfig
 Patch0:		quota-4.04-warnquota.patch
 Patch3:		quota-3.13-wrong-ports.patch
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	gettext
 BuildRequires:	openldap-devel
 BuildRequires:	tcp_wrappers-devel
